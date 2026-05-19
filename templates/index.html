@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCity | 3D Energy Saver Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <section class="hero">
+        <div class="hero-3d-card">
+            <h1>EcoCity</h1>
+            <p>Smart Energy Optimization & 3D Analytics Dashboard</p>
+            <a href="#calculator" class="btn-primary">Launch Simulator</a>
+        </div>
+    </section>
+
+    <section class="section physics-formula">
+        <h2>How Electricity is Calculated</h2>
+        <p>Power consumption calculation follows the core physics laws of energy transformation:</p>
+        <div class="formula-box">
+            $$E_{(kWh)} = \frac{P_{(Watts)} \times t_{(Hours)}}{1000}$$
+        </div>
+        <p class="formula-desc">Cost is derived by multiplying Total $kWh \times \text{Local Unit Tariff}$.</p>
+    </section>
+
+    <section id="calculator" class="section calc-container">
+        <div class="grid-2col">
+            <div class="card glass-card">
+                <h3>Energy Input Simulator</h3>
+                <div class="input-group">
+                    <label>Total Power Load (Watts)</label>
+                    <input type="number" id="powerInput" value="1000" min="1">
+                </div>
+                <div class="input-group">
+                    <label>Usage Duration (Hours/Day)</label>
+                    <input type="number" id="hoursInput" value="5" min="1" max="24">
+                </div>
+                <div class="input-group">
+                    <label>Unit Cost (per kWh)</label>
+                    <input type="number" id="costInput" value="8" min="0">
+                </div>
+                <button onclick="calculateEnergy()" class="btn-calc">Analyze Grid Impact</button>
+            </div>
+
+            <div class="card glass-card metrics-grid">
+                <div class="metric-box">
+                    <h4>Daily Consumption</h4>
+                    <span id="resEnergy">5.00</span> <small>kWh</small>
+                </div>
+                <div class="metric-box">
+                    <h4>Electricity Cost</h4>
+                    <span id="resCost">40.00</span> <small>INR</small>
+                </div>
+                <div class="metric-box">
+                    <h4>Carbon Footprint</h4>
+                    <span id="resCo2">4.25</span> <small>kg CO₂</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section grid-2col">
+        <div class="card glass-card center-content">
+            <h3>Carbon Footprint Index</h3>
+            <div class="meter-wrapper">
+                <div class="meter-pointer" id="meterPointer"></div>
+            </div>
+            <p id="meterStatus" style="margin-top: 20px; font-weight: 600; color: #20B2AA;">Eco-Friendly</p>
+        </div>
+        
+        <div class="card glass-card">
+            <h3>30-Day Bill Projection</h3>
+            <canvas id="billChart"></canvas>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="card glass-card text-center">
+            <h3>Solar Panel Energy Estimator</h3>
+            <p>Calculate how much clean energy you can generate from your rooftop</p>
+            <div class="grid-3col" style="margin-top: 25px;">
+                <div class="input-group">
+                    <label>Roof Area Available (sq. ft)</label>
+                    <input type="number" id="solarArea" value="300" oninput="estimateSolar()">
+                </div>
+                <div class="metric-box">
+                    <h4>Estimated Generation</h4>
+                    <span id="solarGen">450</span> <small>kWh / Month</small>
+                </div>
+                <div class="metric-box">
+                    <h4>CO2 Offset Potential</h4>
+                    <span id="solarOffset">382</span> <small>kg / Month</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section grid-2col">
+        <div class="card glass-card">
+            <h3>💡 Smart Optimization Tips</h3>
+            <ul class="tips-list" id="tipsContainer">
+                <li>Upgrade to BLDC motors in fans to instantly save up to 60% power.</li>
+                <li>Shift heavy grid loads (AC, Geysers) to solar peak hours (11 AM - 3 PM).</li>
+                <li>Eliminate Phantom Load by switching off idle smart appliances from main plugs.</li>
+            </ul>
+        </div>
+
+        <div class="card glass-card">
+            <h3>⚛️ Physics of Power Saving</h3>
+            <div class="physics-item">
+                <strong>Ohmic Loss Minimization ($I^2R$):</strong>
+                <p>By upgrading to higher gauge copper wiring, we decrease Resistance ($R$), reducing heat loss during transmission.</p>
+            </div>
+            <div class="physics-item">
+                <strong>Power Factor ($\cos \theta$) Correction:</strong>
+                <p>Using capacitor banks counters inductive loads from motors, bringing the power factor closer to 1.0 for absolute efficiency.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section smart-city-management">
+        <h2>How Modern Cities Manage Electricity Efficiently</h2>
+        <div class="grid-3col">
+            <div class="card city-card">
+                <h4>Smart Grids</h4>
+                <p>Using IoT sensors to automatically redirect power from low-demand zones to high-demand zones instantly.</p>
+            </div>
+            <div class="card city-card">
+                <h4>Auto-Dimming Streetlights</h4>
+                <p>LDR and motion sensors dim streetlights to 20% power when no traffic or pedestrians are detected.</p>
+            </div>
+            <div class="card city-card">
+                <h4>Peak Load Shaving</h4>
+                <p>Industrial sectors are incentivized to utilize power during midnight troughs rather than afternoon peaks.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section power-flow-section">
+        <h2>Animated Smart City Power Flow</h2>
+        <p>Live simulation of Electrons ($e^-$) flowing dynamically from Power Grid to Smart Houses.</p>
+        <canvas id="powerCanvas"></canvas>
+    </section>
+
+    <script>
+        // Math & Chart Configuration
+        let chart;
+        function initChart() {
+            const ctx = document.getElementById('billChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    datasets: [{
+                        label: 'Projected Cost (INR)',
+                        data: [280, 560, 840, 1120],
+                        borderColor: '#20B2AA',
+                        backgroundColor: 'rgba(32, 178, 170, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } }
+            });
+        }
+
+        function calculateEnergy() {
+            const watts = parseFloat(document.getElementById('powerInput').value);
+            const hours = parseFloat(document.getElementById('hoursInput').value);
+            const unitCost = parseFloat(document.getElementById('costInput').value);
+
+            // Calculations
+            const dailyKwh = (watts * hours) / 1000;
+            const dailyCost = dailyKwh * unitCost;
+            const dailyCo2 = dailyKwh * 0.85; // 0.85 kg CO2 per kWh average grid factor
+
+            // Update DOM
+            document.getElementById('resEnergy').innerText = dailyKwh.toFixed(2);
+            document.getElementById('resCost').innerText = dailyCost.toFixed(2);
+            document.getElementById('resCo2').innerText = dailyCo2.toFixed(2);
+
+            // Update Chart Data
+            chart.data.datasets[0].data = [
+                (dailyCost * 7).toFixed(0),
+                (dailyCost * 14).toFixed(0),
+                (dailyCost * 21).toFixed(0),
+                (dailyCost * 30).toFixed(0)
+            ];
+            chart.update();
+
+            // Rotate Carbon Meter Pointer
+            const maxKwhRange = 15; 
+            let angle = (dailyKwh / maxKwhRange) * 180 - 90;
+            if(angle > 90) angle = 90;
+            document.getElementById('meterPointer').style.transform = `translateX(-50%) rotate(${angle}deg)`;
+
+            const statusText = document.getElementById('meterStatus');
+            if(dailyKwh < 4) { statusText.innerText = "Eco-Friendly"; statusText.style.color = "#20B2AA"; }
+            else if(dailyKwh < 9) { statusText.innerText = "Moderate Footprint"; statusText.style.color = "#E6E6FA"; }
+            else { statusText.innerText = "High Carbon Emission Warning!"; statusText.style.color = "#ff4a4a"; }
+        }
+
+        function estimateSolar() {
+            const area = parseFloat(document.getElementById('solarArea').value) || 0;
+            const monthlyGen = area * 1.5; 
+            const co2Offset = monthlyGen * 0.85;
+
+            document.getElementById('solarGen').innerText = monthlyGen.toFixed(0);
+            document.getElementById('solarOffset').innerText = co2Offset.toFixed(0);
+        }
+
+        // 11. Animated Power Flow Canvas Simulation
+        const canvas = document.getElementById('powerCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 400;
+        canvas.height = 150;
+
+        let particles = [];
+        for(let i=0; i<25; i++) {
+            particles.push({ x: Math.random() * canvas.width, speed: 1 + Math.random() * 2 });
+        }
+
+        function drawPowerFlow() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid Line
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 6;
+            ctx.moveTo(50, 75);
+            ctx.lineTo(canvas.width - 50, 75);
+            ctx.stroke();
+
+            // Grid Nodes
+            ctx.fillStyle = '#20B2AA';
+            ctx.beginPath(); ctx.arc(50, 75, 12, 0, Math.PI*2); ctx.fill(); // Source
+            ctx.fillStyle = '#C8A2C8';
+            ctx.beginPath(); ctx.arc(canvas.width - 50, 75, 12, 0, Math.PI*2); ctx.fill(); // Smart House
+
+            // Moving Particles (Energy Flow)
+            ctx.fillStyle = '#20B2AA';
+            particles.forEach(p => {
+                p.x += p.speed;
+                if(p.x > canvas.width - 50) p.x = 50;
+                ctx.beginPath();
+                ctx.arc(p.x, 75, 4, 0, Math.PI*2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawPowerFlow);
+        }
+
+        window.onload = function() {
+            initChart();
+            calculateEnergy();
+            drawPowerFlow();
+        };
+    </script>
+</body>
+</html>
