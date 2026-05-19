@@ -22,9 +22,9 @@
         <h2>How Electricity is Calculated</h2>
         <p>Power consumption calculation follows the core physics laws of energy transformation:</p>
         <div class="formula-box">
-            $$E_{(kWh)} = \frac{P_{(Watts)} \times t_{(Hours)}}{1000}$$
+            Energy (kWh) = (Power (Watts) × Time (Hours)) / 1000
         </div>
-        <p class="formula-desc">Cost is derived by multiplying Total $kWh \times \text{Local Unit Tariff}$.</p>
+        <p class="formula-desc">Cost is derived by multiplying Total kWh with Local Unit Tariff.</p>
     </section>
 
     <section id="calculator" class="section calc-container">
@@ -112,11 +112,11 @@
         <div class="card glass-card">
             <h3>⚛️ Physics of Power Saving</h3>
             <div class="physics-item">
-                <strong>Ohmic Loss Minimization ($I^2R$):</strong>
-                <p>By upgrading to higher gauge copper wiring, we decrease Resistance ($R$), reducing heat loss during transmission.</p>
+                <strong>Ohmic Loss Minimization:</strong>
+                <p>By upgrading to higher gauge copper wiring, we decrease Resistance, reducing heat loss during transmission.</p>
             </div>
             <div class="physics-item">
-                <strong>Power Factor ($\cos \theta$) Correction:</strong>
+                <strong>Power Factor Correction:</strong>
                 <p>Using capacitor banks counters inductive loads from motors, bringing the power factor closer to 1.0 for absolute efficiency.</p>
             </div>
         </div>
@@ -142,12 +142,11 @@
 
     <section class="section power-flow-section">
         <h2>Animated Smart City Power Flow</h2>
-        <p>Live simulation of Electrons ($e^-$) flowing dynamically from Power Grid to Smart Houses.</p>
+        <p>Live simulation of Electrons flowing dynamically from Power Grid to Smart Houses.</p>
         <canvas id="powerCanvas"></canvas>
     </section>
 
     <script>
-        // Math & Chart Configuration
         let chart;
         function initChart() {
             const ctx = document.getElementById('billChart').getContext('2d');
@@ -169,21 +168,18 @@
         }
 
         function calculateEnergy() {
-            const watts = parseFloat(document.getElementById('powerInput').value);
-            const hours = parseFloat(document.getElementById('hoursInput').value);
-            const unitCost = parseFloat(document.getElementById('costInput').value);
+            const watts = parseFloat(document.getElementById('powerInput').value) || 0;
+            const hours = parseFloat(document.getElementById('hoursInput').value) || 0;
+            const unitCost = parseFloat(document.getElementById('costInput').value) || 0;
 
-            // Calculations
             const dailyKwh = (watts * hours) / 1000;
             const dailyCost = dailyKwh * unitCost;
-            const dailyCo2 = dailyKwh * 0.85; // 0.85 kg CO2 per kWh average grid factor
+            const dailyCo2 = dailyKwh * 0.85;
 
-            // Update DOM
             document.getElementById('resEnergy').innerText = dailyKwh.toFixed(2);
             document.getElementById('resCost').innerText = dailyCost.toFixed(2);
             document.getElementById('resCo2').innerText = dailyCo2.toFixed(2);
 
-            // Update Chart Data
             chart.data.datasets[0].data = [
                 (dailyCost * 7).toFixed(0),
                 (dailyCost * 14).toFixed(0),
@@ -192,7 +188,6 @@
             ];
             chart.update();
 
-            // Rotate Carbon Meter Pointer
             const maxKwhRange = 15; 
             let angle = (dailyKwh / maxKwhRange) * 180 - 90;
             if(angle > 90) angle = 90;
@@ -213,10 +208,9 @@
             document.getElementById('solarOffset').innerText = co2Offset.toFixed(0);
         }
 
-        // 11. Animated Power Flow Canvas Simulation
         const canvas = document.getElementById('powerCanvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 400;
+        canvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 50;
         canvas.height = 150;
 
         let particles = [];
@@ -227,7 +221,6 @@
         function drawPowerFlow() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Grid Line
             ctx.beginPath();
             ctx.strokeStyle = '#334155';
             ctx.lineWidth = 6;
@@ -235,13 +228,11 @@
             ctx.lineTo(canvas.width - 50, 75);
             ctx.stroke();
 
-            // Grid Nodes
             ctx.fillStyle = '#20B2AA';
-            ctx.beginPath(); ctx.arc(50, 75, 12, 0, Math.PI*2); ctx.fill(); // Source
+            ctx.beginPath(); ctx.arc(50, 75, 12, 0, Math.PI*2); ctx.fill(); 
             ctx.fillStyle = '#C8A2C8';
-            ctx.beginPath(); ctx.arc(canvas.width - 50, 75, 12, 0, Math.PI*2); ctx.fill(); // Smart House
+            ctx.beginPath(); ctx.arc(canvas.width - 50, 75, 12, 0, Math.PI*2); ctx.fill(); 
 
-            // Moving Particles (Energy Flow)
             ctx.fillStyle = '#20B2AA';
             particles.forEach(p => {
                 p.x += p.speed;
