@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoCity | 3D Energy Saver Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -64,7 +64,7 @@
     </section>
 
     <section class="section grid-2col">
-        <div class="card glass-card center-content">
+        <div class="card glass-card text-center">
             <h3>Carbon Footprint Index</h3>
             <div class="meter-wrapper">
                 <div class="meter-pointer" id="meterPointer"></div>
@@ -80,8 +80,9 @@
 
     <section class="section">
         <div class="card glass-card text-center">
-            <h3>Solar Panel Energy Estimator</h3>
-            <p>Calculate how much clean energy you can generate from your rooftop</p>
+            <h3>Solar Panel Energy Estimator & I-V Curve</h3>
+            <p>Calculate rooftop generation configurations and simulate photovoltaic cell output characteristics.</p>
+            
             <div class="grid-3col" style="margin-top: 25px;">
                 <div class="input-group">
                     <label>Roof Area Available (sq. ft)</label>
@@ -94,6 +95,28 @@
                 <div class="metric-box">
                     <h4>CO2 Offset Potential</h4>
                     <span id="solarOffset">382</span> <small>kg / Month</small>
+                </div>
+            </div>
+
+            <div class="grid-2col" style="margin-top: 40px; text-align: left; align-items: center;">
+                <div class="card city-card">
+                    <h4>PV Panel Metrics Setup</h4>
+                    <div class="input-group">
+                        <label>Open-Circuit Voltage (Voc): <span id="vocVal" style="color:var(--lilac)">45</span> V</label>
+                        <input type="range" id="vocInput" min="20" max="60" value="45" step="1" oninput="updateIVCurve()">
+                    </div>
+                    <div class="input-group">
+                        <label>Short-Circuit Current (Isc): <span id="iscVal" style="color:var(--teal)">9</span> A</label>
+                        <input type="range" id="iscInput" min="3" max="15" value="9" step="0.5" oninput="updateIVCurve()">
+                    </div>
+                    <blockquote>
+                        <small style="color: var(--text-muted);">
+                            The teal graph displays <strong>Current (A)</strong>, while the purple fill outlines overall output <strong>Power (W)</strong> across changing loads.
+                        </small>
+                    </blockquote>
+                </div>
+                <div>
+                    <canvas id="ivChart" style="max-height: 290px;"></canvas>
                 </div>
             </div>
         </div>
@@ -148,7 +171,10 @@
 
     <script>
         let chart;
-        function initChart() {
+        let ivChart;
+
+        function initCharts() {
+            // 1. Line Chart Setup for Bill Projection
             const ctx = document.getElementById('billChart').getContext('2d');
             chart = new Chart(ctx, {
                 type: 'line',
@@ -165,6 +191,73 @@
                 },
                 options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } }
             });
+
+            // 2. Dual Y-Axis Setup for Solar PV I-V Curve 
+            const ctxIV = document.getElementById('ivChart').getContext('2d');
+            ivChart = new Chart(ctxIV, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Current (A)',
+                            data: [],
+                            borderColor: '#20B2AA',
+                            backgroundColor: 'transparent',
+                            yAxisID: 'yCurrent',
+                            tension: 0.2
+                        },
+                        {
+                            label: 'Power (W)',
+                            data: [],
+                            borderColor: '#C8A2C8',
+                            backgroundColor: 'rgba(200, 162, 200, 0.08)',
+                            yAxisID: 'yPower',
+                            tension: 0.2,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Voltage (V)', color: '#fff' }, ticks: { color: '#9ca3af' } },
+                        yCurrent: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Current (Amps)', color: '#20B2AA' }, ticks: { color: '#9ca3af' } },
+                        yPower: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'Power (Watts)', color: '#C8A2C8' }, ticks: { color: '#9ca3af' }, grid: { drawOnChartArea: false } }
+                    },
+                    plugins: { legend: { labels: { color: '#fff' } } }
+                }
+            });
+        }
+
+        function updateIVCurve() {
+            const voc = parseFloat(document.getElementById('vocInput').value);
+            const isc = parseFloat(document.getElementById('iscInput').value);
+            
+            document.getElementById('vocVal').innerText = voc;
+            document.getElementById('iscVal').innerText = isc;
+
+            const voltages = [];
+            const currents = [];
+            const powers = [];
+
+            // Simulates true solar cellular drop-offs using an internal loop matrix
+            for (let v = 0; v <= voc; v += Math.ceil(voc / 15)) {
+                voltages.push(v);
+                let current = isc * (1 - Math.pow(v / voc, 5.5)); 
+                if (current < 0) current = 0;
+                
+                currents.push(current.toFixed(2));
+                powers.push((v * current).toFixed(1));
+            }
+
+            // Cap off final indexes explicitly
+            voltages.push(voc); currents.push(0); powers.push(0);
+
+            ivChart.data.labels = voltages;
+            ivChart.data.datasets[0].data = currents;
+            ivChart.data.datasets[1].data = powers;
+            ivChart.update();
         }
 
         function calculateEnergy() {
@@ -208,6 +301,7 @@
             document.getElementById('solarOffset').innerText = co2Offset.toFixed(0);
         }
 
+        // Particle System Canvas Loop
         const canvas = document.getElementById('powerCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 50;
@@ -245,8 +339,10 @@
         }
 
         window.onload = function() {
-            initChart();
+            initCharts();
             calculateEnergy();
+            estimateSolar();
+            updateIVCurve();
             drawPowerFlow();
         };
     </script>
