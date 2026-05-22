@@ -1,8 +1,13 @@
-from flask import request, jsonify
+from flask import Flask, render_template
+import os
 
-@app.route('/api/log-simulation', methods=['POST'])
-def log_simulation():
-    data = request.json
-    # Process or save your solar area / consumption data here
-    print(f"User generated {data.get('generation')} kWh simulation data.")
-    return jsonify({"status": "success", "message": "Metrics logged."})
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    # Automatically picks up port from environment or defaults to 5000
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
