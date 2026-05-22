@@ -116,6 +116,32 @@ input:focus {
     outline: none;
 }
 
+/* Custom Range Input Styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: #111827;
+    border: 1px solid #374151;
+    height: 10px;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--teal);
+    transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
 .btn-primary, .btn-calc {
     display: inline-block;
     background: linear-gradient(135deg, var(--teal), var(--lilac));
@@ -155,7 +181,7 @@ input:focus {
     color: var(--teal);
 }
 
-/* 5. Carbon Footprint Meter Animation */
+/* Carbon Footprint Meter Animation */
 .meter-wrapper {
     width: 200px;
     height: 100px;
@@ -164,6 +190,7 @@ input:focus {
     border-top-right-radius: 100px;
     position: relative;
     overflow: hidden;
+    margin: 0 auto;
 }
 
 .meter-wrapper::after {
@@ -220,6 +247,12 @@ input:focus {
     border-top: 3px solid var(--lilac);
     padding: 20px;
     border-radius: 12px;
+}
+
+blockquote {
+    border-left: 3px solid var(--teal);
+    padding-left: 10px;
+    margin: 15px 0 0 0;
 }
 
 /* Power Flow Canvas Center Alignment */
