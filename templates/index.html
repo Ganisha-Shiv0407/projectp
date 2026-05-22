@@ -18,6 +18,18 @@
         </div>
     </section>
 
+    <section class="section text-center" style="margin-top: -40px;">
+        <div class="card glass-card" style="max-width: 400px; margin: 0 auto; padding: 25px;">
+            <h3>📱 Open Mobile Version</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+                Scan this QR code to run this simulation pipeline directly on your smartphone.
+            </p>
+            <div style="background: #0b0f19; padding: 15px; border-radius: 16px; display: inline-block; border: 1px solid rgba(32, 178, 170, 0.2);">
+                <img src="/get_qr" alt="Dashboard Web Link QR Code" style="display: block; max-width: 180px; height: auto;">
+            </div>
+        </div>
+    </section>
+
     <section class="section physics-formula">
         <h2>How Electricity is Calculated</h2>
         <p>Power consumption calculation follows the core physics laws of energy transformation:</p>
@@ -174,7 +186,6 @@
         let ivChart;
 
         function initCharts() {
-            // 1. Line Chart Setup for Bill Projection
             const ctx = document.getElementById('billChart').getContext('2d');
             chart = new Chart(ctx, {
                 type: 'line',
@@ -192,7 +203,6 @@
                 options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } }
             });
 
-            // 2. Dual Y-Axis Setup for Solar PV I-V Curve 
             const ctxIV = document.getElementById('ivChart').getContext('2d');
             ivChart = new Chart(ctxIV, {
                 type: 'line',
@@ -241,7 +251,6 @@
             const currents = [];
             const powers = [];
 
-            // Simulates true solar cellular drop-offs using an internal loop matrix
             for (let v = 0; v <= voc; v += Math.ceil(voc / 15)) {
                 voltages.push(v);
                 let current = isc * (1 - Math.pow(v / voc, 5.5)); 
@@ -251,7 +260,6 @@
                 powers.push((v * current).toFixed(1));
             }
 
-            // Cap off final indexes explicitly
             voltages.push(voc); currents.push(0); powers.push(0);
 
             ivChart.data.labels = voltages;
@@ -301,7 +309,6 @@
             document.getElementById('solarOffset').innerText = co2Offset.toFixed(0);
         }
 
-        // Particle System Canvas Loop
         const canvas = document.getElementById('powerCanvas');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 50;
